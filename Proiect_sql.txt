@@ -1,0 +1,380 @@
+CREATE TABLE CLIENT
+(id_client number(5),
+nume varchar2(25) constraint c_nume not null, prenume varchar2(25),
+nr_telefon char(10),
+CONSTRAINT client_pk PRIMARY KEY (id_client), unique(nr_telefon)
+);
+
+CREATE SEQUENCE SEQ_CLIENT
+INCREMENT by 1
+START WITH 1
+MINVALUE 1
+MAXVALUE 1000 NOCYCLE;
+
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Pomparau', 'Renato', '0720005401');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Duduman',	'Cristian', '0720005402');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Moisie', 'Lucian', '0720005403');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Lucica', 'Fratica', '0720005404');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Noel', 'Miller', '0720005405');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Adelyn', 'Pomparau', '0735874350');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon) 
+VALUES (SEQ_CLIENT.NEXTVAL, 'Lady', 'Guagua', '0720005409');
+
+
+SELECT * FROM CLIENT;
+
+
+
+CREATE TABLE MOD_DE_PLATA
+(id_mod_plata number(5), denumire varchar2(20),
+CONSTRAINT id_mod_plata_pk PRIMARY KEY (id_mod_plata)
+);
+
+
+INSERT INTO MOD_DE_PLATA
+VALUES (1, 'cash');
+INSERT INTO MOD_DE_PLATA 
+VALUES (2, 'card') ;
+INSERT INTO MOD_DE_PLATA
+VALUES (3, 'cash') ;
+INSERT INTO MOD_DE_PLATA
+VALUES (4, 'asigurare') ;
+INSERT INTO MOD_DE_PLATA
+VALUES (5, 'card') ;
+
+
+select * from MOD_DE_PLATA;
+
+drop table reparatii;
+CREATE TABLE REPARATII
+(id_comanda number(5), 
+data_comanda date default sysdate,
+id_mod_plata number(5) constraint mod_not_null not null,
+id_client number(5) ,
+CONSTRAINT reparatii_pk PRIMARY KEY (id_comanda),
+CONSTRAINT reparatie_id_mod_plata_fk foreign key(id_mod_plata) references MOD_DE_PLATA(id_mod_plata),
+CONSTRAINT reparatie_client_fk foreign key(id_client) references CLIENT(id_client)
+);
+
+SELECT * FROM REPARATII;
+
+create SEQUENCE SEQ_REPARATII
+INCREMENT by 2
+START WITH 21
+MINVALUE 21
+MAXVALUE 10000 NOCYCLE;
+
+
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('09-03-2021','dd-mm-yyyy'), 1, 2);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('15-10-2020','dd-mm-yyyy'), 2, 5);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('03-05-2020','dd-mm-yyyy'), 3, 1);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('05-07-2021','dd-mm-yyyy'), 4, 3);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('18-10-2019','dd-mm-yyyy'), 5, 7);
+
+SELECT * FROM REPARATII;
+
+
+CREATE TABLE categorie
+(id_categorie number(5),
+nume_categorie varchar(20) constraint nume_categ_not_null not null, CONSTRAINT categorii_pk PRIMARY KEY (id_categorie), unique(nume_categorie)
+);
+
+ 
+CREATE SEQUENCE SEQ_CATEGORIE
+INCREMENT by 10
+START WITH 300
+MINVALUE 300
+MAXVALUE 10000 NOCYCLE;
+
+INSERT INTO categorie
+VALUES (SEQ_CATEGORII.NEXTVAL, 'Masini');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORII.NEXTVAL, 'Motociclete');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORII.NEXTVAL, 'Barci');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORII.NEXTVAL, 'Microbuze');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORII.NEXTVAL, 'Autobuze');
+
+SELECT * FROM categorie;
+
+CREATE TABLE distribuitor
+(id_furnizor number(5),
+denumire varchar2(20) not null, nume varchar(10),
+CONSTRAINT furnizori_pk PRIMARY KEY (id_furnizor)
+);
+
+create sequence SQL_distribuitor
+INCREMENT by 10
+START WITH 1000
+MINVALUE 1000
+MAXVALUE 90000 NOCYCLE;
+
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 1', 'Strada 1');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 2', 'Strada 2');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 3', 'Strada 3');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 4', 'Strada 4');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 5', 'Strada 5');
+
+SELECT * FROM distribuitor;
+
+CREATE TABLE Piese
+(id_piesa number(5),
+denumire varchar2(20) not null,
+id_furnizor number(5) not null,
+CONSTRAINT piese_pk PRIMARY KEY (id_piesa),
+CONSTRAINT piese_distribuitor_fk foreign key(id_furnizor) references distribuitor(id_furnizor), unique(denumire)
+);
+Create Sequence sqe_piese
+INCREMENT by 1
+START WITH 170
+MINVALUE 170
+MAXVALUE 90000 NOCYCLE;
+
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Anvelope', 1040);
+INSERT INTO Piese 
+VALUES(sqe_piese.NEXTVAL, 'Luneta', 1050);
+INSERT INTO Piese 
+VALUES(sqe_piese.NEXTVAL, 'Faruri', 1060);
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Vopsea exterior', 1070);
+INSERT INTO Piese 
+VALUES(sqe_piese.NEXTVAL, 'Retapitare', 1080);
+
+SELECT * FROM Piese;
+
+
+CREATE TABLE autovehicul
+(id_autovehicul number(5),
+tip varchar2(30)  not null,
+id_client number(5),
+pret number(3)  not null,
+id_categorie number(5)  not null,
+check(pret>0),
+CONSTRAINT autovehicul_pk PRIMARY KEY (id_autovehicul),
+CONSTRAINT autovhicul_categorie_fk foreign key(id_categorie) references categorie(id_categorie),
+CONSTRAINT autovehicul_client_fk foreign key(id_client) references CLIENT(id_client)
+
+);
+
+CREATE SEQUENCE SEQ_PRODUS
+INCREMENT by 1
+START WITH 50
+MINVALUE 50
+MAXVALUE 90000 NOCYCLE;
+
+
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL, 1, 'Bugatti Chiron', 300, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL, 2, 'Mc LarenP1', 40,300); 
+INSERT INTO produse
+VALUES(SEQ_PRODUS.NEXTVAL,  3,'Porsche 918 Spyder.',	500, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL, 4, 'Ferrari LaFerrari.', 600, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL, 5,'Koenigsegg Agera RS.',  900,	300); 
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL, 6,'Pagani Huarya.',  900, 300); 
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL, 1,'Bugatti Veyron.',  900, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL, 2,'Kawasaki Ninja',  900, 310);
+
+SELECT * FROM autovehicul;
+
+
+
+CREATE TABLE necesita
+(id_autovehicul number(5) constraint produs_not_null not null, id_piesa number(5) constraint ingred_not_null not null,
+CONSTRAINT necesita_autovehicul_fk foreign key(id_autovehicul) references autovehicul(id_autovehicul),
+CONSTRAINT necesita_piese_fk foreign key(id_piesa) references piese(id_piesa),
+CONSTRAINT pk_necesita primary key(id_autovehicul, id_piesa)
+);
+select * from piese;
+INSERT INTO necesita VALUES(71,177);
+INSERT INTO necesita VALUES(71,177);
+INSERT INTO necesita VALUES(71,177);
+INSERT INTO necesita VALUES(71,177);
+INSERT INTO necesita VALUES(72,178);
+INSERT INTO necesita VALUES(72,179);
+INSERT INTO necesita VALUES(72,179);
+INSERT INTO necesita VALUES(73,180);
+INSERT INTO necesita VALUES(73,180);
+INSERT INTO necesita VALUES(73,181);
+INSERT INTO necesita VALUES(74,181);
+INSERT INTO necesita VALUES(75,178);
+INSERT INTO necesita VALUES(76,179);
+INSERT INTO necesita VALUES(77,180);
+
+drop table angajat;
+CREATE TABLE angajat
+(id_angajat number(5),
+nume varchar(25) , 
+prenume varchar(25),
+email varchar(30),
+nr_telefon varchar(25),
+data_angajare date default sysdate,
+tip_angajat varchar2(20),
+experienta number(2),
+CONSTRAINT angajati_pk PRIMARY KEY (id_angajat),
+unique(nr_telefon)
+);
+
+select * from angajat;
+INSERT INTO angajat
+VALUES(200,	'Moise', 'Lucain', 'lucika@angajat.ro', '0712345678',to_date('01-10-2019','dd-mm-yyyy'), 'Vulcanizator',  null);
+INSERT INTO angajat
+VALUES(201,	'Duduman', 'Cristy ', 'kitydudu@angajat.ro', '0712345648', to_date('01-10-2019','dd-mm-yyyy'), 'Mecanic',	2);
+INSERT INTO angajat
+VALUES(202,	'Adelyn', 'Pomarau', 'adelyn@angajat.ro', '0712345688',	to_date('02-07- 2019','dd-mm-yyyy'), 'Vopsitor',  null);
+INSERT INTO angajat
+VALUES(203,	'Renato', 'Pompatrau', 'pompa@angajat.ro', '0712345478', to_date('03-02- 2021','dd-mm-yyyy'), 'Mecanic', 3);
+INSERT INTO angajat
+VALUES(204,	'Janes', 'Roamnes', 'habibi@angajat.ro', '0712345668', to_date('04-05- 2015','dd-mm-yyyy'), 'Vulcanizator', null);
+
+
+SELECT * FROM reparatii;
+
+CREATE TABLE repara
+(id_angajat number(5) , 
+id_comanda number(5) , 
+id_autovehicul number(5),
+CONSTRAINT repara_angajat_fk foreign key(id_angajat) references angajat(id_angajat), 
+CONSTRAINT repara_autovehicul_fk foreign key(id_autovehicul) references autovehicul(id_autovehicul),
+CONSTRAINT reoara_reparatie_fk foreign key(id_comanda) references reparatii(id_comanda),
+Constraint pk_repara primary key(id_angajat, id_autovehicul,id_comanda)
+
+);
+select * from reparatii;   -- id comanda 91-99    auto 71-77    200-204
+INSERT INTO repara VALUES(200,91,71);
+INSERT INTO repara VALUES(200,93,72);
+INSERT INTO repara VALUES(200,93,73);
+INSERT INTO repara VALUES(200,95,74);
+INSERT INTO repara VALUES(201,95,75);
+INSERT INTO repara VALUES(201,96,76);
+INSERT INTO repara VALUES(201,97,77);
+INSERT INTO repara VALUES(202,95,71);
+INSERT INTO repara VALUES(203,97,73);
+INSERT INTO repara VALUES(203,97,75);
+INSERT INTO repara VALUES(204,91,76);
+
+
+
+SELECT * FROM distribuitor;
+COMMIT;
+
+--- SA SE AFISEZE FURNIZORII CARE AU CONTRIBUIT CU PIESE LA REPARATIA MASINILOR
+--- DIN COMANDA LUI POMPARAU. Se ordoneaza dupa id_furnizor 
+---(ordonari si 4 joinuri)
+
+SELECT DISTINCT d.id_furnizor, d.denumire, p.denumire
+FROM distribuitor d 
+JOIN piese p ON (d.id_furnizor=p.id_furnizor) 
+JOIN necesita n  ON (p.id_piesa=n.id_piesa)
+JOIN autovehicul a ON (a.id_autovehicul=n.id_autovehicul)
+JOIN repara r ON (a.id_autovehicul=r.id_autovehicul) 
+JOIN reparatii re ON (re.id_comanda=r.id_comanda) 
+JOIN client cli ON (cli.id_client=re.id_client)
+WHERE (cli.nume)='Pomparau'
+order by d.id_furnizor;
+
+--- Sa se afiseze angajatii care lucreaza la  
+---masina Bugatti Chiron folosind subcereri necorelate
+select a.nume from angajat a
+where a.id_angajat=ANY(select r.id_angajat from repara r where  r.id_autovehicul=
+(select auto.id_autovehicul from autovehicul auto where LOWER(auto.tip)='bugatti chiron'));
+
+---Sa se afiseze numarul angajatilor in functie de specializare care
+---lucreaza la o reparatie ceruta dupa data de 5.
+SELECT r.id_comanda, (SELECT COUNT( DISTINCT repa.id_angajat)
+FROM angajat a JOIN repara repa ON (a.id_angajat=repa.id_angajat) WHERE tip_angajat='Mecanic' and r.id_comanda=repa.id_comanda) Numar_Mecanici,
+(SELECT COUNT( DISTINCT repa.id_angajat)
+FROM angajat a JOIN repara repa ON (a.id_angajat=repa.id_angajat) WHERE tip_angajat='Vulcanizator' and r.id_comanda=repa.id_comanda
+) Numar_Vulcanizatori,
+(SELECT COUNT( DISTINCT repa.id_angajat)
+FROM angajat a JOIN repara repa ON (a.id_angajat=repa.id_angajat) WHERE tip_angajat='Vopsitor' and r.id_comanda=repa.id_comanda
+) Numar_Vulcanizatori, count(*)
+FROM reparatii r
+WHERE TO_NUMBER(SUBSTR(r.data_comanda, 1, 2)) >=5
+group BY r.id_comanda;
+
+--- folosesc group by pentru a vedea cate masini si motociclete 
+--- sunt in categoriile specifice pentru fiecare.
+select  count(*)
+from autovehicul auto
+group by auto.id_categorie;
+
+
+
+SELECT pret, tip,
+CASE
+    WHEN pret > 100 THEN 'Pretul e mai mare de 100'
+    ELSE 'Pretul e mai mic decat 100'
+END AS Status
+FROM autovehicul;
+
+-- sa se afiseze idul si tipul autovehiculelor care au costul de reparatie/ pret
+-- mai mare decat avg(pret) folosing WITH.
+WITH temporaryTable(averageValue) as
+    (SELECT avg(pret)
+    from autovehicul)
+        SELECT id_autovehicul,tip, pret 
+        FROM autovehicul, temporaryTable 
+        WHERE autovehicul.pret > temporaryTable.averageValue;
+    
+-- afiseaza folosind decode brandul pentru fiecare masina    
+select tip, id_autovehicul, 
+decode(tip, 
+'Bugatti Chiron','Bugatti ',
+'Mc LarenP1', 'McLaren Automotive',
+'Ferrari LaFerrari.','Exor',
+'Brand necunoscut'
+) as Firma_care_detine
+from autovehicul;
+
+
+
+-- Sa se mareasca pretul tuturor reparatiilor pentru masini cu 10.
+UPDATE autovehicul SET pret=pret+10
+WHERE id_autovehicul IN (SELECT id_autovehicul
+FROM autovehicul auto JOIN categorie c ON (auto.id_categorie=c.id_categorie) 
+WHERE auto.id_categorie=300
+);
+
+SELECT * FROM autovehicul;
+ROLLBACK;
+
+-- Sa se adauge un an de experienta pentru toti angajatii care au fsot angajati
+-- in 2019. In caz ca campul experienta este null sa se faca 1 folosind nvl 
+-- altfel sa se incremenetze cu 1 coloana experienta.
+UPDATE angajat
+SET experienta=
+CASE
+when experienta is null then NVL(experienta, 1)
+else experienta+1
+END
+WHERE id_angajat IN (SELECT id_angajat
+FROM angajat aa WHERE  EXTRACT(YEAR FROM aa.data_angajare)=2019
+);
+
+SELECT EXTRACT(YEAR FROM aa.data_angajare)
+from angajat aa;

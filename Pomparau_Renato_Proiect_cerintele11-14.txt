@@ -1,0 +1,117 @@
+--- SA SE AFISEZE FURNIZORII CARE AU CONTRIBUIT CU PIESE LA REPARATIA MASINILOR
+--- DIN COMANDA LUI POMPARAU. Se ordoneaza dupa id_furnizor 
+---(ordonari si 4 joinuri)
+
+SELECT DISTINCT d.id_furnizor, d.denumire, p.denumire
+FROM distribuitor d 
+JOIN piese p ON (d.id_furnizor=p.id_furnizor) 
+JOIN necesita n  ON (p.id_piesa=n.id_piesa)
+JOIN autovehicul a ON (a.id_autovehicul=n.id_autovehicul)
+JOIN repara r ON (a.id_autovehicul=r.id_autovehicul) 
+JOIN reparatii re ON (re.id_comanda=r.id_comanda) 
+JOIN client cli ON (cli.id_client=re.id_client)
+WHERE (cli.nume)='Pomparau'
+order by d.id_furnizor;
+
+--- Sa se afiseze angajatii care lucreaza la  
+---masina Bugatti Chiron folosind subcereri necorelate
+select a.nume from angajat a
+where a.id_angajat=ANY(select r.id_angajat from repara r where  r.id_autovehicul=
+(select auto.id_autovehicul from autovehicul auto where LOWER(auto.tip)='bugatti chiron'));
+
+---Sa se afiseze numarul angajatilor in functie de specializare care
+---lucreaza la o reparatie ceruta dupa data de 5.
+SELECT r.id_comanda, (SELECT COUNT( DISTINCT repa.id_angajat)
+FROM angajat a JOIN repara repa ON (a.id_angajat=repa.id_angajat) WHERE tip_angajat='Mecanic' and r.id_comanda=repa.id_comanda) Numar_Mecanici,
+(SELECT COUNT( DISTINCT repa.id_angajat)
+FROM angajat a JOIN repara repa ON (a.id_angajat=repa.id_angajat) WHERE tip_angajat='Vulcanizator' and r.id_comanda=repa.id_comanda
+) Numar_Vulcanizatori,
+(SELECT COUNT( DISTINCT repa.id_angajat)
+FROM angajat a JOIN repara repa ON (a.id_angajat=repa.id_angajat) WHERE tip_angajat='Vopsitor' and r.id_comanda=repa.id_comanda
+) Numar_Vulcanizatori, count(*)
+FROM reparatii r
+WHERE TO_NUMBER(SUBSTR(r.data_comanda, 1, 2)) >=5
+group BY r.id_comanda;
+
+--- folosesc group by pentru a vedea cate masini si motociclete 
+--- sunt in categoriile specifice pentru fiecare.
+select  count(*)
+from autovehicul auto
+group by auto.id_categorie;
+
+
+
+SELECT pret, tip,
+CASE
+    WHEN pret > 100 THEN 'Pretul e mai mare de 100'
+    ELSE 'Pretul e mai mic decat 100'
+END AS Status
+FROM autovehicul;
+
+-- sa se afiseze idul si tipul autovehiculelor care au costul de reparatie/ pret
+-- mai mare decat avg(pret) folosing WITH.
+WITH temporaryTable(averageValue) as
+    (SELECT avg(pret)
+    from autovehicul)
+        SELECT id_autovehicul,tip, pret 
+        FROM autovehicul, temporaryTable 
+        WHERE autovehicul.pret > temporaryTable.averageValue;
+    
+-- afiseaza folosind decode brandul pentru fiecare masina    
+select tip, id_autovehicul, 
+decode(tip, 
+'Bugatti Chiron','Bugatti ',
+'Mc LarenP1', 'McLaren Automotive',
+'Ferrari LaFerrari.','Exor',
+'Brand necunoscut'
+) as Firma_care_detine
+from autovehicul;
+
+
+
+-- Sa se mareasca pretul tuturor reparatiilor pentru masini cu 10.
+UPDATE autovehicul SET pret=pret+10
+WHERE id_autovehicul IN (SELECT id_autovehicul
+FROM autovehicul auto JOIN categorie c ON (auto.id_categorie=c.id_categorie) 
+WHERE auto.id_categorie=300
+);
+
+SELECT * FROM autovehicul;
+ROLLBACK;
+
+-- Sa se adauge un an de experienta pentru toti angajatii care au fsot angajati
+-- in 2019. In caz ca campul experienta este null sa se faca 1 folosind nvl 
+-- altfel sa se incremenetze cu 1 coloana experienta.
+UPDATE angajat
+SET experienta=
+CASE
+when experienta is null then NVL(experienta, 1)
+else experienta+1
+END
+WHERE id_angajat IN (SELECT id_angajat
+FROM angajat aa WHERE  EXTRACT(YEAR FROM aa.data_angajare)=2019
+);
+
+SELECT EXTRACT(YEAR FROM aa.data_angajare)
+from angajat aa;
+
+
+UPDATE distribuitor
+SET nume='Strada 100'
+WHERE id_furnizor =1040;
+
+
+--- folosind create view creez un table virtual in care afisez pentru fiecare
+---masina ce piesa trebuie inlocuita
+
+CREATE VIEW Vizualizare_compusa AS
+SELECT a.tip, a.id_autovehicul, p.denumire
+FROM Piese p, autovehicul a
+WHERE (a.id_autovehicul in (select n.id_autovehicul from necesita n where n.id_piesa=p.id_piesa));
+
+--- PENTRU CREATE VIEW NU POT FOLOSI UPDATE DEOARECE AM FACUT VIEW DIN DOUA TABELE
+--- IN SCHIMB POT FOLOSI CREATE OR REPLACE VIEW PENTRU A MODELA VIEW-UL
+
+select * from Vizualizare_compusa;
+Rollback;
+Commit;
