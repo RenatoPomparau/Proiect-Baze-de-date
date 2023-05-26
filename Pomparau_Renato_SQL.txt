@@ -1,0 +1,799 @@
+CREATE TABLE CLIENT
+(id_client number(5),
+nume varchar2(25) constraint c_nume not null, prenume varchar2(25),
+nr_telefon char(10),
+CONSTRAINT client_pk PRIMARY KEY (id_client), unique(nr_telefon)
+);
+
+CREATE SEQUENCE SEQ_CLIENT
+INCREMENT by 1
+START WITH 1
+MINVALUE 1
+MAXVALUE 1000 NOCYCLE;
+
+
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Pomparau', 'Renato', '0720005401');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Duduman', 'Cristian', '0720005402');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Moisii', 'Lucian', '0720005403');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Stacy ', 'Hughes', '0720005404');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Kathy ', 'George', '0720005405');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Adelyn', 'Pomparau', '0735874350');
+INSERT INTO CLIENT(id_client, nume, prenume, nr_telefon)
+VALUES (SEQ_CLIENT.NEXTVAL, 'Eric', 'King', '0720005409');
+SELECT * FROM CLIENT;
+
+
+CREATE TABLE MOD_DE_PLATA
+(id_plata number(5), denumire varchar2(20) check (denumire in ('cash','card','asigurare')),
+CONSTRAINT id_plata_pk PRIMARY KEY (id_plata)
+);
+
+drop table MOD_DE_PLATA;
+drop table reparatii;
+
+INSERT INTO MOD_DE_PLATA
+VALUES (1, 'cash');
+INSERT INTO MOD_DE_PLATA
+VALUES (2, 'card') ;
+INSERT INTO MOD_DE_PLATA
+VALUES (3 ,'cash') ;
+INSERT INTO MOD_DE_PLATA
+VALUES (4,'asigurare') ;
+INSERT INTO MOD_DE_PLATA
+VALUES (5, 'card') ;
+
+commit;
+
+CREATE TABLE REPARATII
+(id_comanda number(5),
+data_comanda date default sysdate,
+id_plata number(5) constraint mod_not_null not null,
+id_client number(5) ,
+CONSTRAINT reparatii_pk PRIMARY KEY (id_comanda),
+CONSTRAINT reparatie_id_plata_fk foreign key(id_plata) references MOD_DE_PLATA(id_plata),
+CONSTRAINT reparatie_client_fk foreign key(id_client) references CLIENT(id_client)
+);
+
+create SEQUENCE SEQ_REPARATII
+INCREMENT by 2
+START WITH 21
+MINVALUE 21
+MAXVALUE 10000 NOCYCLE;
+
+
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('09-03-2021','dd-mm-yyyy'), 1, 5);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('15-10-2020','dd-mm-yyyy'), 2, 4);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('03-05-2020','dd-mm-yyyy'), 3, 3);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('05-07-2021','dd-mm-yyyy'), 4, 2);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('18-10-2019','dd-mm-yyyy'), 5, 1);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('18-10-2023','dd-mm-yyyy'), 5, 1);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('19-10-2023','dd-mm-yyyy'), 5, 1);
+INSERT INTO REPARATII
+VALUES(SEQ_REPARATII.NEXTVAL, to_date('20-10-2023','dd-mm-yyyy'), 5, 1);
+SELECT * FROM REPARATII;
+
+CREATE TABLE categorie
+(id_categorie number(7),
+nume_categorie varchar(20)
+constraint nume_categ_not_null not null,
+CONSTRAINT categorii_pk PRIMARY KEY (id_categorie), unique(nume_categorie)
+);
+
+drop table categorie;
+CREATE SEQUENCE SEQ_CATEGORIE
+INCREMENT by 10
+START WITH 300
+MINVALUE 300
+MAXVALUE 10000 NOCYCLE;
+
+INSERT INTO categorie
+VALUES (SEQ_CATEGORIE.NEXTVAL, 'Masini');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORIE.NEXTVAL, 'Motociclete');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORIE.NEXTVAL, 'Barci');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORIE.NEXTVAL, 'Microbuze');
+INSERT INTO categorie
+VALUES (SEQ_CATEGORIE.NEXTVAL, 'Autobuze');
+
+
+CREATE TABLE distribuitor
+(id_furnizor number(5),
+denumire varchar2(20) not null, nume varchar(10),
+CONSTRAINT furnizori_pk PRIMARY KEY (id_furnizor)
+);
+
+create sequence SQL_distribuitor
+INCREMENT by 10
+START WITH 1000
+MINVALUE 1000
+MAXVALUE 90000 NOCYCLE;
+
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 1', 'Strada 1');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 2', 'Strada 2');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 3', 'Strada 3');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 4', 'Strada 4');
+INSERT INTO distribuitor
+VALUES (SQL_distribuitor.NEXTVAL, 'SC 5', 'Strada 5');
+
+CREATE TABLE Piese
+(id_piesa number(5),
+denumire varchar2(20) not null,
+id_furnizor number(5) not null,
+CONSTRAINT piese_pk PRIMARY KEY (id_piesa),
+CONSTRAINT piese_distribuitor_fk foreign key(id_furnizor) references distribuitor(id_furnizor), unique(denumire)
+);
+Create Sequence sqe_piese
+INCREMENT by 1
+START WITH 170
+MINVALUE 170
+MAXVALUE 90000 NOCYCLE;
+
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Anvelope', 1010);
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Luneta', 1020);
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Faruri', 1030);
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Vopsea exterior', 1040);
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Retapitare', 1000);
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Retapitare2', 1000);
+INSERT INTO Piese
+VALUES(sqe_piese.NEXTVAL, 'Retapitare3', 1000);
+
+CREATE TABLE autovehicul
+(id_autovehicul number(5),
+
+id_client number(5),
+nume varchar(20),
+pret number(3)  not null,
+id_categorie number(5)  not null,
+check(pret>0),
+CONSTRAINT autovehicul_pk PRIMARY KEY (id_autovehicul),
+CONSTRAINT autovhicul_categorie_fk foreign key(id_categorie) references categorie(id_categorie),
+CONSTRAINT autovehicul_client_fk foreign key(id_client) references CLIENT(id_client)
+
+);
+
+CREATE  SEQUENCE SEQ_PRODUS
+INCREMENT by 1
+START WITH 60
+MINVALUE 50
+MAXVALUE 90000 NOCYCLE;
+
+drop table autovehicul;
+drop table necesita;
+drop sequence SEQ_PRODUS;
+
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,1, 'Bugatti Chiron', 300, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,2, 'Mc LarenP1', 40,300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,3, 'Ferrari LaFerrari.', 600, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,4, 'Koenigsegg Agera RS.',  900, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,3, 'Pagani Huarya.',  900, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,5, 'Bugatti Veyron.',  900, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,6, 'Kawasaki Ninja',  900, 310);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,7, 'Cuirasate',  900, 320);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,6 ,'Crucisatoare',  900, 320);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,7,'Distrugatoare',  900, 320);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,1, 'Dacia Logan ', 300, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,1, 'Dacia Logan1 ', 300, 300);
+INSERT INTO autovehicul
+VALUES(SEQ_PRODUS.NEXTVAL,1, 'Dacia Logan2 ', 300, 300);
+commit;
+CREATE TABLE necesita
+(id_autovehicul number(5) constraint produs_not_null not null, id_piesa number(5) constraint ingred_not_null not null,
+CONSTRAINT necesita_autovehicul_fk foreign key(id_autovehicul) references autovehicul(id_autovehicul),
+CONSTRAINT necesita_piese_fk foreign key(id_piesa) references piese(id_piesa),
+CONSTRAINT pk_necesita primary key(id_autovehicul, id_piesa)
+);
+commit;
+select * from autovehicul;
+select * from piese;
+
+INSERT INTO necesita VALUES(61,170);
+INSERT INTO necesita VALUES(61,172);
+INSERT INTO necesita VALUES(61,173);
+INSERT INTO necesita VALUES(62,174);
+INSERT INTO necesita VALUES(62,171);
+INSERT INTO necesita VALUES(63,172);
+INSERT INTO necesita VALUES(63,173);
+INSERT INTO necesita VALUES(63,171);
+INSERT INTO necesita VALUES(64,171);
+INSERT INTO necesita VALUES(65,172);
+INSERT INTO necesita VALUES(66,173);
+INSERT INTO necesita VALUES(67,174);
+INSERT INTO necesita VALUES(67,175);
+INSERT INTO necesita VALUES(70,174);
+INSERT INTO necesita VALUES(71,175);
+INSERT INTO necesita VALUES(72,174);
+
+commit;
+drop table angajat;
+CREATE TABLE angajat
+(id_angajat number(5),
+nume varchar(25) ,
+prenume varchar(25),
+email varchar(30),
+nr_telefon varchar(25),
+data_angajare date default sysdate,
+tip_angajat varchar2(20),
+experienta number(2),
+CONSTRAINT angajati_pk PRIMARY KEY (id_angajat),
+unique(nr_telefon)
+);
+
+select * from angajat;
+INSERT INTO angajat
+VALUES(200, 'Moise', 'Lucain', 'lucika@angajat.ro', '0712345678',to_date('01-10-2019','dd-mm-yyyy'), 'Vulcanizator',  null);
+INSERT INTO angajat
+VALUES(201, 'Duduman', 'Cristy ', 'kitydudu@angajat.ro', '0712345648', to_date('01-10-2019','dd-mm-yyyy'), 'Mecanic', 2);
+INSERT INTO angajat
+VALUES(202, 'Adelyn', 'Pomarau', 'adelyn@angajat.ro', '0712345688', to_date('02-07- 2019','dd-mm-yyyy'), 'Vopsitor',  null);
+INSERT INTO angajat
+VALUES(203, 'Renato', 'Pompatrau', 'pompa@angajat.ro', '0712345478', to_date('03-02- 2021','dd-mm-yyyy'), 'Mecanic', 3);
+INSERT INTO angajat
+VALUES(204, 'Yamil', 'Davos', 'habibi@angajat.ro', '0712345668', to_date('04-05- 2015','dd-mm-yyyy'), 'Vulcanizator', null);
+
+
+SELECT * FROM reparatii;
+
+CREATE TABLE repara
+(id_angajat number(5) ,
+id_comanda number(5) ,
+id_autovehicul number(5),
+data_inceput date,
+data_finalizare date default null,
+CONSTRAINT repara_angajat_fk foreign key(id_angajat) references angajat(id_angajat),
+CONSTRAINT repara_autovehicul_fk foreign key(id_autovehicul) references autovehicul(id_autovehicul),
+CONSTRAINT reoara_reparatie_fk foreign key(id_comanda) references reparatii(id_comanda),
+Constraint pk_repara primary key(id_angajat, id_autovehicul,id_comanda)
+
+);
+select * from reparatii;   -- id comanda 43-2-51    auto 60-69    200-204
+INSERT INTO repara VALUES(200,21,61,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(200,23,62,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(200,23,63,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(200,25,64,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(201,25,65,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(201,27,66,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(201,27,67,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(202,25,61,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,27,63,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,27,65,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(204,21,66,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,35,72,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,33,71,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(204,31,70,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+select *  from reparatii;
+
+SELECT * FROM repara;
+COMMIT;
+
+
+
+select a.nume,count(*) nr_de_reparatii
+from necesita n join  autovehicul a
+on a.id_autovehicul=n.id_autovehicul
+group by a.nume;
+
+
+
+CREATE OR REPLACE procedure vehicule_categorie
+    (Categorie IN autovehicul.id_categorie%TYPE)
+    as
+--Categorie varchar(8) := '&categorie';
+TYPE vector_masini IS TABLE OF autovehicul%rowtype index by binary_integer;
+masini vector_masini;
+TYPE nume_numar IS RECORD(
+        nume_masina autovehicul.nume%TYPE,
+        numar_piese number
+    );
+   
+    TYPE vector_masini_piese IS VARRAY(20)
+        OF nume_numar;
+vec1 vector_masini_piese;
+BEGIN
+select * bulk collect into masini from autovehicul where id_categorie=Categorie;
+select a.nume,count(*)
+bulk collect into vec1
+from  autovehicul a,necesita n
+where a.id_autovehicul = n.id_autovehicul
+group by a.nume;
+FOR i in  masini.first..masini.last loop
+FOR j in  vec1.first..vec1.last loop
+if masini(i).nume=vec1(j).nume_masina then
+ DBMS_OUTPUT.PUT_LINE(vec1(j).nume_masina || ' necesita o schimbare de '||vec1(j).numar_piese ||' piese.');
+ end if;
+end loop;
+
+end loop;
+end;
+
+DECLARE
+    cat autovehicul.id_categorie%TYPE := '300';
+BEGIN
+    vehicule_categorie(cat);
+END;
+
+
+--Cerinta 7:
+--Pentru un angajat angajat al atelierului auto sa se afiseze masinile pe care le-a
+--reparat si piesele pe care le-a folosit la fiecare masina.
+-- folosesc  2 cursori,macar unul cu parametru.
+-- deschid cursorul cu parametru id_autovehicul care va stoca masinile pe care le repara
+-- pentru fiecare masina iterez prin piesele pe care le are nevoie.
+
+select denumire  from piese where id_piesa= TO_CHAR(170);
+ 
+create or replace procedure angajati_masini
+    (id_emp IN angajat.id_angajat%type)
+    as
+    nume_piesa piese.denumire%type;
+    c2_variable necesita.id_piesa%type;
+    c1_variable autovehicul.id_autovehicul%type;
+    cursor c1  is
+    select id_autovehicul
+    from repara
+    where id_angajat=id_emp;
+    cursor c2(id_masina necesita.id_autovehicul%type) is
+    select id_piesa
+    from necesita
+    where id_autovehicul=id_masina;
+    employee_exist NUMBER;
+    masina_curenta autovehicul.nume%type;
+begin
+    SELECT id_angajat INTO employee_exist
+    FROM angajat WHERE id_angajat = id_emp;
+
+    open c1;
+    loop fetch c1 into c1_variable;
+    exit when c1%notfound;
+    select nume into masina_curenta from autovehicul where id_autovehicul=c1_variable;
+    dbms_output.put(masina_curenta ||' are nevoie de urmatoarele piese: ');
+    open c2(c1_variable);
+    loop fetch c2 into c2_variable;
+   
+    exit when c2%notfound;
+    select denumire into nume_piesa from piese where id_piesa= c2_variable;
+    dbms_output.put(nume_piesa ||' ');
+    end loop;
+    dbms_output.put_line('');
+    close c2;
+    end loop;
+
+   
+    close c1;
+
+   
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nu exista angajatul');
+  --WHEN OTHERS THEN
+    --DBMS_OUTPUT.PUT_LINE('An error occurred');
+    end;
+   
+  /
+declare
+angajatul angajat.id_angajat%TYPE := '200';
+BEGIN
+    angajati_masini(angajatul);
+end;
+
+
+--Cerinta 8:
+
+--Se da id-ul unui distribuitor si o categorie de autovehicle.
+--sa se afizeze la cate masini a contribuit piesa furnizata
+select n.id_autovehicul
+from piese p join distribuitor d on p.id_furnizor=d.id_furnizor
+join necesita n on n.id_piesa=p.id_piesa
+where p.id_furnizor=1000;
+
+create or replace function nr_contributii(idul distribuitor.id_furnizor%type,categ autovehicul.id_categorie%type)
+return number is
+total number :=0;
+no_category EXCEPTION;
+PRAGMA exception_init(no_category, -20001);
+no_furnizor EXCEPTION;
+PRAGMA exception_init(no_furnizor, -20002);
+type tabel is table of autovehicul.id_autovehicul%type index by pls_integer;
+type tabel2 is table of autovehicul%rowtype index by pls_integer;
+iduri_autovehicule tabel;
+autouri tabel2;
+begin
+select count(*) into total  from categorie where id_categorie=categ;
+if total=0 then  raise_application_error(-20001, '');
+end if;
+select count(*) into total
+from distribuitor
+where id_furnizor=idul;
+
+if total=0 then  raise_application_error(-20002, '');
+end if;
+select distinct n.id_autovehicul
+bulk collect into iduri_autovehicule -- idurile masinilor care au primit piese de la furnizor
+from piese p join distribuitor d on p.id_furnizor=d.id_furnizor
+join necesita n on n.id_piesa=p.id_piesa
+where p.id_furnizor=idul;
+
+select * bulk collect into  autouri
+from autovehicul a
+where a.id_categorie=categ;
+
+for i in autouri.first..autouri.last loop
+for j in iduri_autovehicule.first..iduri_autovehicule.last loop
+if iduri_autovehicule(j)=autouri(i).id_autovehicul then total:=total+1;
+end if;
+end loop;
+end loop;
+return total;
+exception
+when no_category then
+dbms_output.put_line('Nu exista categoria');
+    return -1;
+    when no_furnizor then
+dbms_output.put_line('Nu exista furnizorul');
+    return -1;
+end;
+/
+declare
+id_cat number;
+id_dist number;
+numar_total number;
+begin
+    numar_total := nr_contributii(100,300);
+    dbms_output.put_line(numar_total);
+end;
+
+
+--Cerinta 9:
+--Se da numele unui client de la tastatura.
+--Sa se afiseze toate autovehiculele din acceasi categorie
+--pe care le-a adus pe parcusrul anului curent.
+--se da numele iau id join cu comanda ---2
+--le iau pe cele cu data anul asta
+--ma duc in comanda si vad ce id autovehicul are  ---3
+--ma duc in autovehicul si vad categoria ---4
+select a.nume
+from client cl join reparatii re on cl.id_client=re.id_client
+join repara rep on rep.id_comanda = re.id_comanda
+join autovehicul a on a.id_autovehicul=rep.id_autovehicul
+join categorie c on a.id_categorie=c.id_categorie
+where c.nume_categorie='Masini' and
+EXTRACT( year from re.data_comanda) = EXTRACT(YEAR FROM sysdate)
+and cl.nume='Pomparau';
+--merg in categorie si vad daca corespunde cu categoria ceruta
+--Cerinta 9
+--Pentru numele dat, sa se afiseze autovehiculele din categoria respectiva adusa pe parcusrul anului curent.
+create or replace procedure cerinta_noua(nume_client client.nume%type, 
+nume_categ categorie.nume_categorie%type) 
+is  
+cursor c1  (nc client.nume%type, 
+ng categorie.nume_categorie%type) is 
+select a.nume 
+from client cl join reparatii re on cl.id_client=re.id_client 
+join repara rep on rep.id_comanda = re.id_comanda 
+join autovehicul a on a.id_autovehicul=rep.id_autovehicul 
+join categorie c on a.id_categorie=c.id_categorie 
+where c.nume_categorie=ng and 
+EXTRACT( year from re.data_comanda) = EXTRACT(YEAR FROM sysdate)  
+
+and cl.nume=nc; 
+ contor number :=0;
+begin 
+
+ for i in c1(nume_client,nume_categ) loop 
+        dbms_output.put_line(i.nume); 
+        contor:=contor+1;
+    end loop; 
+ if contor  =0 then  
+dbms_output.put_line('Nu s-a gasit nimic in baza de date'); 
+end if; 
+end cerinta_noua; 
+/
+
+declare 
+begin 
+cerinta_noua('Pomparau','Masini'); 
+end;
+
+--Cerinta 10
+--Trigger care nu permite adaugarea, stergerea si modificarea reparatiilor in afara programului. 
+
+--Program: 8:00-17:00, iar in weekend intre 10:00-14:00.
+CREATE OR REPLACE TRIGGER program_atelierauto
+    BEFORE INSERT OR UPDATE OR DELETE ON reparatii
+BEGIN
+    IF TO_CHAR(SYSDATE, 'DAY') = 'SATURDAY' OR TO_CHAR(SYSDATE, 'DAY') = 'SUNDAY' THEN 
+        IF TO_NUMBER(TO_CHAR(SYSDATE, 'HH24')) < 10 THEN
+            RAISE_APPLICATION_ERROR(-20010, 'Program D-S intre orele 0:00-14:00'); 
+        END IF;
+        IF TO_NUMBER(TO_CHAR(SYSDATE, 'HH24')) > 14  THEN
+            RAISE_APPLICATION_ERROR(-20011, 'Program D-S intre orele 0:00-14:00');
+        END IF;
+    ELSE 
+        IF TO_NUMBER(TO_CHAR(SYSDATE, 'HH24')) < 8 THEN
+            RAISE_APPLICATION_ERROR(-20012, 'Program L-V intre orele 8:00-17:00');
+        END IF;
+        IF TO_NUMBER(TO_CHAR(SYSDATE, 'HH24')) > 17 THEN
+            RAISE_APPLICATION_ERROR(-20013, 'Program L-V intre orele 8:00-17:00');
+        END IF;
+    END IF;
+END;
+/
+Declare 
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Zi: ' || TO_CHAR(SYSDATE, 'DAY'));
+    DBMS_OUTPUT.PUT_LINE('Ora: ' || TO_CHAR(SYSDATE, 'HH24:MI'));
+    
+    INSERT INTO REPARATII 
+        VALUES(SEQ_REPARATII.NEXTVAL, to_date('21-03-2002','dd-mm-yyyy'), 2, 5);
+END;
+
+INSERT INTO repara VALUES(200,21,61,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(200,23,62,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(200,23,63,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(200,25,64,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(201,25,65,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(201,27,66,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(201,27,67,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(202,25,61,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,27,63,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,27,65,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(204,21,66,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,35,72,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(203,33,71,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+INSERT INTO repara VALUES(204,31,70,TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),null);
+
+--Cerinta 11:
+--Pentru a preda o comanda, trebui sa verificam daca a fost finalizata comanda.
+-- se afiseaza daca e in curs de lucru sau daca inca nu a fost alocat un angajat pentru comanda.
+select * from repara where data_finalizare is not null;
+update repara set data_finalizare=sysdate where id_angajat=200;
+create or replace trigger finalizare_comanda
+before delete
+on repara
+for each row
+declare
+pragma autonomous_transaction;
+v_data repara.data_finalizare%type;
+begin
+if deleting then
+select data_finalizare into  v_data
+from repara
+where id_angajat=:old.id_angajat and id_comanda=:old.id_comanda and id_autovehicul=:old.id_autovehicul;
+if v_data is null then raise_application_error(-20010,'Reparatia nu a fost inca finalizata');
+
+elsif  v_data<sysdate then
+DBMS_OUTPUT.PUT_LINE('Reparatia a fost finalizara in data ' || v_data ||' si a fost stearsa cu succes');
+else  DBMS_OUTPUT.PUT_LINE('Nimic');
+end if;
+end if;
+end;
+select * from repara;
+rollback;
+delete from repara;
+
+CREATE OR REPLACE TRIGGER adminul
+    BEFORE CREATE OR DROP OR ALTER ON SCHEMA
+BEGIN
+    IF USER != UPPER('APEX_PUBLIC_USER') THEN
+        RAISE_APPLICATION_ERROR(-20010,'Doar APEX_PUBLIC_USER poate executa comenzi LDD!');
+    END IF;
+END;
+/
+create table try(
+tries varchar2(10)
+);
+drop table try;
+
+
+create or replace package  pachetul as
+procedure vehicule_categorie (Categorie IN autovehicul.id_categorie%TYPE);
+procedure angajati_masini    (id_emp IN angajat.id_angajat%type);
+function nr_contributii(idul distribuitor.id_furnizor%type,categ autovehicul.id_categorie%type)
+return number ;
+ procedure cerinta_noua(nume_client client.nume%type, 
+nume_categ categorie.nume_categorie%type) ;
+end pachetul;
+
+
+
+
+
+
+create or replace package body pachetul as
+--9
+procedure cerinta_noua(nume_client client.nume%type, 
+nume_categ categorie.nume_categorie%type) 
+is  
+cursor c1  (nc client.nume%type, 
+ng categorie.nume_categorie%type) is 
+select a.nume 
+from client cl join reparatii re on cl.id_client=re.id_client 
+join repara rep on rep.id_comanda = re.id_comanda 
+join autovehicul a on a.id_autovehicul=rep.id_autovehicul 
+join categorie c on a.id_categorie=c.id_categorie 
+where c.nume_categorie=ng and 
+EXTRACT( year from re.data_comanda) = EXTRACT(YEAR FROM sysdate)  
+
+and cl.nume=nc; 
+ contor number :=0;
+begin 
+
+ for i in c1(nume_client,nume_categ) loop 
+        dbms_output.put_line(i.nume); 
+    end loop; 
+ if contor  =0 then  
+dbms_output.put_line('Nu s-a gasit nimic in baza de date'); 
+end if; 
+end cerinta_noua; 
+
+--8
+function nr_contributii(idul distribuitor.id_furnizor%type,categ autovehicul.id_categorie%type)
+return number is
+total number :=0;
+no_category EXCEPTION;
+PRAGMA exception_init(no_category, -20001);
+no_furnizor EXCEPTION;
+PRAGMA exception_init(no_furnizor, -20002);
+type tabel is table of autovehicul.id_autovehicul%type index by pls_integer;
+type tabel2 is table of autovehicul%rowtype index by pls_integer;
+iduri_autovehicule tabel;
+autouri tabel2;
+begin
+select count(*) into total  from categorie where id_categorie=categ;
+if total=0 then  raise_application_error(-20001, '');
+end if;
+select count(*) into total
+from distribuitor
+where id_furnizor=idul;
+
+if total=0 then  raise_application_error(-20002, '');
+end if;
+select distinct n.id_autovehicul
+bulk collect into iduri_autovehicule -- idurile masinilor care au primit piese de la furnizor
+from piese p join distribuitor d on p.id_furnizor=d.id_furnizor
+join necesita n on n.id_piesa=p.id_piesa
+where p.id_furnizor=idul;
+
+select * bulk collect into  autouri
+from autovehicul a
+where a.id_categorie=categ;
+
+for i in autouri.first..autouri.last loop
+for j in iduri_autovehicule.first..iduri_autovehicule.last loop
+if iduri_autovehicule(j)=autouri(i).id_autovehicul then total:=total+1;
+end if;
+end loop;
+end loop;
+return total;
+exception
+when no_category then
+dbms_output.put_line('Nu exista categoria');
+    return -1;
+    when no_furnizor then
+dbms_output.put_line('Nu exista furnizorul');
+    return -1;
+end;
+--7
+procedure angajati_masini
+    (id_emp IN angajat.id_angajat%type)
+    as
+    nume_piesa piese.denumire%type;
+    c2_variable necesita.id_piesa%type;
+    c1_variable autovehicul.id_autovehicul%type;
+    cursor c1  is
+    select id_autovehicul
+    from repara
+    where id_angajat=id_emp;
+    cursor c2(id_masina necesita.id_autovehicul%type) is
+    select id_piesa
+    from necesita
+    where id_autovehicul=id_masina;
+    employee_exist NUMBER;
+    masina_curenta autovehicul.nume%type;
+begin
+    SELECT id_angajat INTO employee_exist
+    FROM angajat WHERE id_angajat = id_emp;
+
+    open c1;
+    loop fetch c1 into c1_variable;
+    exit when c1%notfound;
+    select nume into masina_curenta from autovehicul where id_autovehicul=c1_variable;
+    dbms_output.put(masina_curenta ||' are nevoie de urmatoarele piese: ');
+    open c2(c1_variable);
+    loop fetch c2 into c2_variable;
+   
+    exit when c2%notfound;
+    select denumire into nume_piesa from piese where id_piesa= c2_variable;
+    dbms_output.put(nume_piesa ||' ');
+    end loop;
+    dbms_output.put_line('');
+    close c2;
+    end loop;
+
+   
+    close c1;
+
+   
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nu exista angajatul');
+  --WHEN OTHERS THEN
+    --DBMS_OUTPUT.PUT_LINE('An error occurred');
+    end;
+
+ --6
+ procedure vehicule_categorie
+    (Categorie IN autovehicul.id_categorie%TYPE)
+    as
+--Categorie varchar(8) := '&categorie';
+TYPE vector_masini IS TABLE OF autovehicul%rowtype index by binary_integer;
+masini vector_masini;
+TYPE nume_numar IS RECORD(
+        nume_masina autovehicul.nume%TYPE,
+        numar_piese number
+    );
+   
+    TYPE vector_masini_piese IS VARRAY(20)
+        OF nume_numar;
+vec1 vector_masini_piese;
+BEGIN
+select * bulk collect into masini from autovehicul where id_categorie=Categorie;
+select a.nume,count(*)
+bulk collect into vec1
+from  autovehicul a,necesita n
+where a.id_autovehicul = n.id_autovehicul
+group by a.nume;
+FOR i in  masini.first..masini.last loop
+FOR j in  vec1.first..vec1.last loop
+if masini(i).nume=vec1(j).nume_masina then
+ DBMS_OUTPUT.PUT_LINE(vec1(j).nume_masina || ' necesita o schimbare de '||vec1(j).numar_piese ||' piese.');
+ end if;
+end loop;
+
+end loop;
+end;
+end pachetul; 
+
+begin
+    pachetul.cerinta_noua('Pomparau','Masini');
+end;
+
+begin
+    pachetul.angajati_masini(201);
+end;
